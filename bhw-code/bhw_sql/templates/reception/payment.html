@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>前台缴费</title>
+</head>
+<body>
+    <h1>前台缴费（执行INSERT+UPDATE SQL）</h1>
+    <!-- 缴费表单 -->
+    <form action="/reception/submit_payment" method="post">
+        <div>
+            <label>就诊记录ID：</label>
+            <input type="number" name="record_id" required>
+        </div>
+        <div>
+            <label>总费用（元）：</label>
+            <input type="number" step="0.01" name="total" required>
+        </div>
+        <div>
+            <label>医保金额（元）：</label>
+            <input type="number" step="0.01" name="insurance" required>
+        </div>
+        <div>
+            <label>自费金额（元）：</label>
+            <input type="number" step="0.01" name="self_pay" required>
+        </div>
+        <div>
+            <label>缴费方式：</label>
+            <select name="method" required>
+                <option value="现金">现金</option>
+                <option value="微信">微信</option>
+                <option value="支付宝">支付宝</option>
+                <option value="医保">医保</option>
+            </select>
+        </div>
+        <button type="submit">提交缴费</button>
+    </form>
+
+    <hr>
+    <!-- 收费报表查询（执行GROUP BY统计SQL） -->
+    <h3>日收费报表查询</h3>
+    <div>
+        <input type="date" id="reportDate">
+        <button onclick="getReport()">查询</button>
+    </div>
+    <div id="reportResult"></div>
+
+    <script>
+        function getReport() {
+            const date = document.getElementById('reportDate').value;
+            fetch('/reception/report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `date=${date}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && data.data.length > 0) {
+                    const item = data.data[0];
+                    document.getElementById('reportResult').innerHTML = `
+                        <p>日期：${item.pay_date}</p>
+                        <p>总收入：${item.total_income || 0} 元</p>
+                        <p>医保收入：${item.insurance_income || 0} 元</p>
+                        <p>自费收入：${item.self_pay_income || 0} 元</p>
+                        <p>就诊人次：${item.visit_count || 0}</p>
+                    `;
+                } else {
+                    document.getElementById('reportResult').innerHTML = '无数据或查询失败：' + (data.msg || '');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

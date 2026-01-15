@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>患者预约</title>
+</head>
+<body>
+    <h1>患者预约</h1>
+    <!-- 预约表单 -->
+    <form action="/patient/submit_appointment" method="post">
+        <div>
+            <label>姓名：</label>
+            <input type="text" name="name" required>
+        </div>
+        <div>
+            <label>手机号：</label>
+            <input type="tel" name="phone" required>
+        </div>
+        <div>
+            <label>预约科室：</label>
+            <select name="dept_id" required>
+                {% for dept in depts %}
+                <option value="{{ dept.dept_id }}">{{ dept.dept_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>预计就诊时间：</label>
+            <input type="datetime-local" name="expected_time" required>
+        </div>
+        <button type="submit">提交预约（执行INSERT SQL）</button>
+    </form>
+
+    <hr>
+    <!-- 预约查询 -->
+    <h3>查询预约记录（执行SELECT SQL）</h3>
+    <div>
+        <input type="tel" id="queryPhone" placeholder="输入手机号">
+        <button onclick="queryAppointment()">查询</button>
+    </div>
+    <div id="appointmentResult"></div>
+
+    <script>
+        // 原生JS查询预约记录
+        function queryAppointment() {
+            const phone = document.getElementById('queryPhone').value;
+            fetch('/patient/query_appointment', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `phone=${phone}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    let html = '<table border="1"><tr><th>预约ID</th><th>姓名</th><th>科室ID</th><th>预计时间</th><th>状态</th></tr>';
+                    data.data.forEach(item => {
+                        html += `<tr>
+                            <td>${item.appt_id}</td>
+                            <td>${item.patient_name}</td>
+                            <td>${item.dept_id}</td>
+                            <td>${item.expected_arrive}</td>
+                            <td>${item.appt_status}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('appointmentResult').innerHTML = html;
+                } else {
+                    document.getElementById('appointmentResult').innerHTML = '查询失败：' + data.msg;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

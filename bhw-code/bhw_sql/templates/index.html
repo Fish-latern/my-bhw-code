@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>社区医院门诊管理系统</title>
+    <style>/* 极简样式，仅保证可读性 */
+        .role-btn { margin: 20px; padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>社区医院门诊管理系统</h1>
+    <div>
+        <h3>请选择角色</h3>
+        <button class="role-btn" onclick="location.href='/patient/appointment'">患者（预约/查询）</button>
+        <button class="role-btn" onclick="location.href='/reception/register'">前台（预约登记）</button>
+        <button class="role-btn" onclick="location.href='/reception/payment'">前台（缴费/统计）</button>
+        <button class="role-btn" onclick="location.href='/admin/schedule'">管理员（排班管理）</button>
+    </div>
+</body>
+</html>

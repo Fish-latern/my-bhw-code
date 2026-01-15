@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>医生排班管理</title>
+</head>
+<body>
+    <h1>医生排班（执行INSERT SQL）</h1>
+    <form action="/admin/submit_schedule" method="post">
+        <div>
+            <label>选择医生：</label>
+            <select name="doctor_id" required>
+                {% for doc in doctors %}
+                <option value="{{ doc.emp_id }}">{{ doc.emp_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>选择诊室：</label>
+            <select name="room_id" required>
+                {% for room in rooms %}
+                <option value="{{ room.room_id }}">{{ room.room_num }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>排班日期：</label>
+            <input type="date" name="date" required>
+        </div>
+        <div>
+            <label>开始时间：</label>
+            <input type="time" name="start" required>
+        </div>
+        <div>
+            <label>结束时间：</label>
+            <input type="time" name="end" required>
+        </div>
+        <button type="submit">提交排班</button>
+    </form>
+</body>
+</html>
